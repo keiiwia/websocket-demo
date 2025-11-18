@@ -8,7 +8,7 @@ export function App() {
   let [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    let socket = "REPLACE_THIS"; // Create a websocket
+    let socket = new WebSocket("ws://149.31.229.86:3000"); // Create a websocket
 
     function handler({ data }) {
       let event = JSON.parse(data);
@@ -16,9 +16,14 @@ export function App() {
       if (event.type === "welcome") {
         // How do you respond to this
         // What other messages do you need to respond to?
+        // if connected -> setconnected
+        console.log(event);
+        setId(event.id);
+        setMessages(event.messages);
       }
     }
 
+    setSocket(socket);
     socket.addEventListener("message", handler);
 
     return () => {
@@ -35,17 +40,13 @@ export function App() {
           <Message />
         ))}
       </section>
-      <input
-        value={currentMessage}
-        onChange={(event) => setCurrentMessage(event.target.value)}
-      ></input>
+      <span>id:{id}</span>
+      <input value={currentMessage} onChange={(event) => setCurrentMessage(event.target.value)}></input>
       <button
         onClick={() => {
-          /* Do something here */
-        }}
-      >
-        Send
-      </button>
+          /* set message -> app */
+          socket.send(JSON.stringify({type: "client_message", content: currentMessage}))
+        }}>Send</button>
     </>
   );
 }
