@@ -9,7 +9,8 @@ export function App() {
 
   useEffect(() => {
     // EXERCISE 1: Replace this with Matthew's current IP address
-    let socket = new WebSocket("ws://localhost:5173/");
+    let socket = new WebSocket("ws://localhost:3000/");
+    // let socket = new WebSocket("ws://149.31.229.99:3000/");
 
     function handler({ data }) {
       let event = JSON.parse(data);
@@ -23,10 +24,11 @@ export function App() {
         setMessages(messages => [...messages, message])
       } else if (event.type === "connected") {
         // EXERCISE 2: Update the list of connected users here
+
         setConnected(connected => connected);
       } else if (event.type === "disconnected") {
         // EXERCISE 3: Update the list of connected users here
-        setConnected(connected => connected);
+        setConnected(connected => connected.filter(id => id !== event.id));
       }
     }
 
@@ -74,7 +76,10 @@ function Message({ sender, time, isLocal, content }) {
   return <div className={`message${isLocal ? " local" : ""}`}>
     <div className="sender">{sender}</div>
     {/* EXERCISE 4: Look up Javascript's Date object and figure out how to render this */}
-    <div className="time">{time}</div>
+  {/* const epochDate = new Date(1735128600000); // Represents December 25, 2024 10:30:00 UTC */}
+
+    <div className="time">{new Date(time).toLocaleString()}</div>
+    {/* <div className="time">{time}</div> */}
     <p>{content}</p>
   </div>;
 }

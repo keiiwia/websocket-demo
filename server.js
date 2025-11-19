@@ -59,7 +59,6 @@ server.ws("/", (client) => {
 
 // Start the server
 server.listen(port, "0.0.0.0", () => {});
-
 function send(client, message) {
   client.send(JSON.stringify(message));
 }
