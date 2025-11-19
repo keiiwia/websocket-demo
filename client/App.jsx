@@ -8,14 +8,25 @@ export function App() {
   let [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    let socket = "REPLACE_THIS"; // Create a websocket
+    // EXERCISE 1: Replace this with Matthew's current IP address
+    let socket = new WebSocket("ws://localhost:5173/");
 
     function handler({ data }) {
       let event = JSON.parse(data);
 
       if (event.type === "welcome") {
-        // How do you respond to this
-        // What other messages do you need to respond to?
+        setId(event.id);
+        setMessages(event.messages);
+        setConnected(event.connected);
+      } else if (event.type === "server_message") {
+        let { type, ...message } = event;
+        setMessages(messages => [...messages, message])
+      } else if (event.type === "connected") {
+        // EXERCISE 2: Update the list of connected users here
+        setConnected(connected => connected);
+      } else if (event.type === "disconnected") {
+        // EXERCISE 3: Update the list of connected users here
+        setConnected(connected => connected);
       }
     }
 
@@ -31,22 +42,30 @@ export function App() {
 
   return (
     <>
-      <section id="messages">
-        {messages.map((data) => (
-          <Message />
-        ))}
+      <section className="users">
+        <div>My ID: {id}</div>
+        <ul className="connected">
+          {connected.map(id => <li>User {id}</li>)}
+        </ul>
       </section>
-      <input
-        value={currentMessage}
-        onChange={(event) => setCurrentMessage(event.target.value)}
-      ></input>
-      <button
-        onClick={() => {
-          /* Do something here */
-        }}
-      >
-        Send
-      </button>
+      <section id="chat">
+        <section id="messages">
+          {messages.map(({ sender, time, content }) => (
+            <Message sender={`User ${sender}`} time={time} content={content} isLocal={id === sender} />
+          ))}
+        </section>
+        <form action={(formData) => {
+            socket.send(JSON.stringify({ type: "client_message", content: formData.get("message") }));
+            setCurrentMessage("");
+          }}>
+          <input
+            name="message"
+            value={currentMessage}
+            onChange={(event) => setCurrentMessage(event.target.value)}
+          ></input>
+          <input type="submit" value="Send" />
+        </form>
+      </section>
     </>
   );
 }
