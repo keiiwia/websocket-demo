@@ -24,11 +24,10 @@ export function App() {
         setMessages(messages => [...messages, message])
       } else if (event.type === "connected") {
         // EXERCISE 2: Update the list of connected users here
-
         setConnected(connected => connected);
       } else if (event.type === "disconnected") {
         // EXERCISE 3: Update the list of connected users here
-        setConnected(connected => connected.filter(id => id !== event.id));
+        setConnected(connected => connected.filter(id => id !== event.id)); //filter, takes list and returns true or false (if is or isnt true)
       }
     }
 
